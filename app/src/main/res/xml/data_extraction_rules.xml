@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<data-extraction-rules>
+    <cloud-backup>
+        <!-- Exclude local Room database files containing cached locations and forecasts -->
+        <exclude domain="database" path="fomo_weather.db" />
+        <exclude domain="database" path="fomo_weather.db-journal" />
+        <exclude domain="database" path="fomo_weather.db-wal" />
+        <exclude domain="database" path="fomo_weather.db-shm" />
+
+        <!-- Exclude encrypted preferences and cryptographic metadata -->
+        <exclude domain="sharedpref" path="fomo_secure_prefs.xml" />
+    </cloud-backup>
+
+    <device-transfer>
+        <!-- Exclude local Room database files from device transfer -->
+        <exclude domain="database" path="fomo_weather.db" />
+        <exclude domain="database" path="fomo_weather.db-journal" />
+        <exclude domain="database" path="fomo_weather.db-wal" />
+        <exclude domain="database" path="fomo_weather.db-shm" />
+
+        <!-- Exclude encrypted preferences and cryptographic metadata -->
+        <exclude domain="sharedpref" path="fomo_secure_prefs.xml" />
+    </device-transfer>
+</data-extraction-rules>

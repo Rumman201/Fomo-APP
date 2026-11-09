@@ -1,0 +1,11 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Fomo" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/fomo_accent_electric_violet</item>
+        <item name="colorSecondary">@color/fomo_accent_gold</item>
+        <item name="android:statusBarColor">@color/fomo_gradient_start</item>
+        <item name="android:navigationBarColor">@color/fomo_gradient_end</item>
+        <item name="android:windowBackground">@drawable/background</item>
+        <item name="bottomSheetDialogTheme">@style/Theme.Fomo.BottomSheetDialog</item>
+    </style>
+</resources>

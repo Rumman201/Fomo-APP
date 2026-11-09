@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<full-backup-content>
+    <!-- Exclude local Room database files containing cached locations and forecasts -->
+    <exclude domain="database" path="fomo_weather.db" />
+    <exclude domain="database" path="fomo_weather.db-journal" />
+    <exclude domain="database" path="fomo_weather.db-wal" />
+    <exclude domain="database" path="fomo_weather.db-shm" />
+
+    <!-- Exclude encrypted preferences and cryptographic metadata -->
+    <exclude domain="sharedpref" path="fomo_secure_prefs.xml" />
+</full-backup-content>

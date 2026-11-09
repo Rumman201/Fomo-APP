@@ -1,0 +1,68 @@
+<resources>
+    <string name="app_name">Fomo</string>
+    <string name="weather_condition_mostly_cloudy">Mostly Cloudy</string>
+    <string name="sample_date_time">Mon Dec 16 | 2:03 AM</string>
+    <string name="sample_temperature">25°</string>
+    <string name="sample_high_low">H:27 L:18</string>
+    <string name="rain_percentage_sample">22%</string>
+    <string name="rain_label">Rain</string>
+    <string name="wind_speed_sample">12 km/h</string>
+    <string name="wind_label">Wind speed</string>
+    <string name="humidity_percentage_sample">18%</string>
+    <string name="humidity_label">Humidity</string>
+    <string name="section_today">Today</string>
+    <string name="next_7_days">Next 7 Days &gt;</string>
+
+    <!-- Accessibility Content Descriptions -->
+    <string name="cd_weather_condition">Weather condition indicator</string>
+    <string name="cd_rain_icon">Rain probability indicator</string>
+    <string name="cd_wind_icon">Wind speed indicator</string>
+    <string name="cd_humidity_icon">Humidity indicator</string>
+    <string name="cd_hourly_weather">Hourly forecast weather icon</string>
+
+    <!-- Formats -->
+    <string name="temp_celsius_format">%1$d°</string>
+    <string name="default_hourly_time">12:00 PM</string>
+    <string name="default_hourly_temp">20°</string>
+
+    <!-- State & Feedback Strings -->
+    <string name="loading_weather">Updating weather intelligence…</string>
+    <string name="error_loading_weather">Unable to synchronize meteorological data</string>
+    <string name="action_retry">Retry</string>
+    <string name="offline_banner_text">Offline mode • Displaying cached observation</string>
+
+    <!-- Extended Forecast Bottom Sheet -->
+    <string name="weekly_forecast_title">7-Day Extended Outlook</string>
+    <string name="weekly_forecast_subtitle">Automated atmospheric projections</string>
+
+    <!-- Accessibility Enhancements -->
+    <string name="cd_next_7_days">View 7-day extended weather outlook</string>
+    <string name="cd_retry_button">Retry weather synchronization</string>
+    <string name="cd_hourly_card">Forecast for %1$s: %2$d degrees, %3$s</string>
+
+    <!-- Phase 5: Location & Multi-City Management -->
+    <string name="location_header_default">New York, United States</string>
+    <string name="search_city_hint">Search city or location…</string>
+    <string name="search_city_title">Select Location</string>
+    <string name="saved_cities_section">Saved &amp; Recent Cities</string>
+    <string name="search_results_section">Search Results</string>
+    <string name="no_cities_found">No matching cities found</string>
+    <string name="searching_cities">Searching worldwide locations…</string>
+    <string name="cd_select_city">Change current location</string>
+    <string name="cd_search_city">Search cities button</string>
+    <string name="cd_favorite_star">Toggle city favorite</string>
+    <string name="cd_clear_search">Clear search query</string>
+
+    <!-- Phase 5: Atmospheric Intelligence & AI Briefing -->
+    <string name="atmospheric_intelligence_title">Atmospheric Intelligence</string>
+    <string name="ai_briefing_label">AI Meteorological Synthesis</string>
+    <string name="attire_advice_label">Attire &amp; Gear</string>
+    <string name="outdoor_activity_label">Activity Index</string>
+    <string name="cd_attire_icon">Clothing recommendation icon</string>
+    <string name="cd_activity_icon">Outdoor activity score icon</string>
+
+    <!-- Phase 5: Intelligent Automation Alerts -->
+    <string name="active_alert_label">Active Weather Advisory</string>
+    <string name="cd_alert_warning_icon">Weather alert warning icon</string>
+    <string name="action_dismiss_alert">Dismiss</string>
+</resources>

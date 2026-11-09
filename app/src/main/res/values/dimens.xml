@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Spatial Baseline Grid (8dp) -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_s">8dp</dimen>
+    <dimen name="spacing_m">16dp</dimen>
+    <dimen name="spacing_l">24dp</dimen>
+    <dimen name="spacing_xl">32dp</dimen>
+    <dimen name="spacing_xxl">48dp</dimen>
+
+    <!-- Component Sizing -->
+    <dimen name="min_touch_target">48dp</dimen>
+    <dimen name="weather_hero_icon_size">150dp</dimen>
+    <dimen name="hourly_card_width">92dp</dimen>
+    <dimen name="hourly_icon_size">44dp</dimen>
+    <dimen name="metric_icon_size">32dp</dimen>
+    <dimen name="icon_size_s">20dp</dimen>
+    <dimen name="icon_size_m">24dp</dimen>
+
+    <!-- Corner Radii -->
+    <dimen name="corner_radius_card">24dp</dimen>
+    <dimen name="corner_radius_hourly">20dp</dimen>
+    <dimen name="corner_radius_bottom_sheet">28dp</dimen>
+
+    <!-- Elevations -->
+    <dimen name="elevation_card">4dp</dimen>
+    <dimen name="elevation_hourly">3dp</dimen>
+    <dimen name="elevation_bottom_sheet">16dp</dimen>
+</resources>

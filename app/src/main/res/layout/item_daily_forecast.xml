@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:gravity="center_vertical"
+    android:minHeight="@dimen/min_touch_target"
+    android:orientation="horizontal"
+    android:paddingStart="@dimen/spacing_m"
+    android:paddingTop="@dimen/spacing_s"
+    android:paddingEnd="@dimen/spacing_m"
+    android:paddingBottom="@dimen/spacing_s">
+
+    <TextView
+        android:id="@+id/dayNameText"
+        style="@style/TextAppearance.Fomo.MetricValue"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.2"
+        android:textColor="@color/fomo_text_primary"
+        android:textSize="15sp"
+        tools:text="Tomorrow" />
+
+    <ImageView
+        android:id="@+id/dayConditionIcon"
+        android:layout_width="32dp"
+        android:layout_height="32dp"
+        android:layout_marginEnd="@dimen/spacing_s"
+        android:contentDescription="@string/cd_weather_condition"
+        app:srcCompat="@drawable/cloudy_sunny" />
+
+    <TextView
+        android:id="@+id/dayConditionText"
+        style="@style/TextAppearance.Fomo.MetricLabel"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1.5"
+        android:textColor="@color/fomo_text_secondary"
+        android:textSize="13sp"
+        tools:text="Partly cloudy" />
+
+    <TextView
+        android:id="@+id/dayHighLowText"
+        style="@style/TextAppearance.Fomo.HighLow"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textColor="@color/fomo_text_primary"
+        android:textSize="14sp"
+        tools:text="26° / 17°" />
+</LinearLayout>

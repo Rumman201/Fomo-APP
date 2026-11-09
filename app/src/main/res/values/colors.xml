@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Basic Base -->
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+
+    <!-- Fomo Brand & Atmospheric Palette -->
+    <color name="fomo_gradient_start">#1A103C</color>
+    <color name="fomo_gradient_center">#2E1B54</color>
+    <color name="fomo_gradient_end">#3A1C52</color>
+
+    <!-- Elevated Surfaces -->
+    <color name="fomo_surface_card">#2A1B54</color>
+    <color name="fomo_surface_card_selected">#3D2975</color>
+    <color name="fomo_surface_glass">#33FFFFFF</color>
+    <color name="fomo_surface_card_stroke">#4D6E50A6</color>
+    <color name="fomo_surface_bottom_sheet">#211442</color>
+
+    <!-- Accents -->
+    <color name="fomo_accent_gold">#FFB300</color>
+    <color name="fomo_accent_gold_subtle">#33FFB300</color>
+    <color name="fomo_accent_electric_violet">#7C4DFF</color>
+
+    <!-- Semantic Text & Content -->
+    <color name="fomo_text_primary">#FFFFFF</color>
+    <color name="fomo_text_secondary">#D1C4E9</color>
+    <color name="fomo_text_tertiary">#9575CD</color>
+    <color name="fomo_text_gold">#FFB300</color>
+
+    <!-- Feedback & Status -->
+    <color name="fomo_error">#FF5252</color>
+    <color name="fomo_error_container">#33FF5252</color>
+    <color name="fomo_success">#69F0AE</color>
+</resources>

@@ -1,0 +1,64 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme inheriting from Material 3. -->
+    <style name="Base.Theme.Fomo" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/fomo_accent_electric_violet</item>
+        <item name="colorSecondary">@color/fomo_accent_gold</item>
+        <item name="android:statusBarColor">@color/fomo_gradient_start</item>
+        <item name="android:navigationBarColor">@color/fomo_gradient_end</item>
+        <item name="android:windowBackground">@drawable/background</item>
+        <item name="bottomSheetDialogTheme">@style/Theme.Fomo.BottomSheetDialog</item>
+    </style>
+
+    <style name="Theme.Fomo" parent="Base.Theme.Fomo" />
+
+    <!-- Modal Bottom Sheet Theme -->
+    <style name="Theme.Fomo.BottomSheetDialog" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/Widget.Fomo.BottomSheet</item>
+    </style>
+
+    <style name="Widget.Fomo.BottomSheet" parent="Widget.Material3.BottomSheet">
+        <item name="android:background">@drawable/bg_bottom_sheet</item>
+    </style>
+
+    <!-- Typography Styles -->
+    <style name="TextAppearance.Fomo.DisplayTemperature" parent="TextAppearance.Material3.DisplayLarge">
+        <item name="android:textSize">64sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/fomo_text_primary</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="TextAppearance.Fomo.ConditionTitle" parent="TextAppearance.Material3.TitleLarge">
+        <item name="android:textSize">22sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/fomo_text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Fomo.ObservationDate" parent="TextAppearance.Material3.BodyLarge">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/fomo_text_secondary</item>
+    </style>
+
+    <style name="TextAppearance.Fomo.HighLow" parent="TextAppearance.Material3.BodyMedium">
+        <item name="android:textSize">15sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/fomo_text_secondary</item>
+    </style>
+
+    <style name="TextAppearance.Fomo.MetricValue" parent="TextAppearance.Material3.LabelLarge">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/fomo_text_primary</item>
+    </style>
+
+    <style name="TextAppearance.Fomo.MetricLabel" parent="TextAppearance.Material3.LabelMedium">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/fomo_text_secondary</item>
+    </style>
+
+    <style name="TextAppearance.Fomo.SectionHeader" parent="TextAppearance.Material3.TitleMedium">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/fomo_accent_gold</item>
+    </style>
+</resources>

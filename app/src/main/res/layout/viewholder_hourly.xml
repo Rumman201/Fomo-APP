@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/hourlyCard"
+    android:layout_width="@dimen/hourly_card_width"
+    android:layout_height="wrap_content"
+    android:layout_margin="@dimen/spacing_xs"
+    android:clickable="true"
+    android:focusable="true"
+    android:foreground="?attr/selectableItemBackground"
+    app:cardBackgroundColor="@color/fomo_surface_card"
+    app:cardCornerRadius="@dimen/corner_radius_hourly"
+    app:cardElevation="@dimen/elevation_hourly"
+    app:strokeColor="@color/fomo_surface_card_stroke"
+    app:strokeWidth="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:paddingTop="@dimen/spacing_m"
+        android:paddingBottom="@dimen/spacing_m"
+        android:paddingStart="@dimen/spacing_xs"
+        android:paddingEnd="@dimen/spacing_xs">
+
+        <TextView
+            android:id="@+id/hourTxt"
+            style="@style/TextAppearance.Fomo.MetricLabel"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/fomo_text_secondary"
+            android:textSize="13sp"
+            tools:text="12 PM"
+            android:text="@string/default_hourly_time" />
+
+        <ImageView
+            android:id="@+id/pic"
+            android:layout_width="@dimen/hourly_icon_size"
+            android:layout_height="@dimen/hourly_icon_size"
+            android:layout_marginTop="@dimen/spacing_s"
+            android:layout_marginBottom="@dimen/spacing_s"
+            android:contentDescription="@string/cd_hourly_weather"
+            app:srcCompat="@drawable/cloudy_sunny" />
+
+        <TextView
+            android:id="@+id/tempTxt"
+            style="@style/TextAppearance.Fomo.MetricValue"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textAlignment="center"
+            android:textColor="@color/fomo_text_primary"
+            android:textSize="17sp"
+            android:textStyle="bold"
+            tools:text="26°"
+            android:text="@string/default_hourly_temp" />
+    </LinearLayout>
+</com.google.android.material.card.MaterialCardView>

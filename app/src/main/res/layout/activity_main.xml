@@ -1,0 +1,556 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.swiperefreshlayout.widget.SwipeRefreshLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/swipeRefreshLayout"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/background">
+
+    <ScrollView
+        android:id="@+id/mainScrollView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:fillViewport="true"
+        android:overScrollMode="ifContentScrolls">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:paddingBottom="@dimen/spacing_xl">
+
+            <!-- Loading Progress Indicator -->
+            <com.google.android.material.progressindicator.LinearProgressIndicator
+                android:id="@+id/loadingIndicator"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:indeterminate="true"
+                android:visibility="gone"
+                app:indicatorColor="@color/fomo_accent_gold"
+                app:trackColor="@color/fomo_surface_card"
+                tools:visibility="visible" />
+
+            <!-- Error / Offline Degradation Banner -->
+            <LinearLayout
+                android:id="@+id/statusBannerContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_m"
+                android:layout_marginTop="@dimen/spacing_m"
+                android:layout_marginEnd="@dimen/spacing_m"
+                android:background="@drawable/bg_error_banner"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/spacing_s"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <TextView
+                    android:id="@+id/statusBannerText"
+                    style="@style/TextAppearance.Fomo.MetricLabel"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_s"
+                    android:layout_weight="1"
+                    android:textColor="@color/fomo_text_primary"
+                    android:text="@string/error_loading_weather" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/statusRetryButton"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:contentDescription="@string/cd_retry_button"
+                    android:minHeight="@dimen/min_touch_target"
+                    android:text="@string/action_retry"
+                    android:textColor="@color/fomo_accent_gold" />
+            </LinearLayout>
+
+            <!-- Active Weather Alert Banner -->
+            <LinearLayout
+                android:id="@+id/weatherAlertBannerContainer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="@dimen/spacing_m"
+                android:layout_marginTop="@dimen/spacing_s"
+                android:layout_marginEnd="@dimen/spacing_m"
+                android:background="@drawable/bg_error_banner"
+                android:gravity="center_vertical"
+                android:orientation="horizontal"
+                android:padding="@dimen/spacing_s"
+                android:visibility="gone"
+                tools:visibility="visible">
+
+                <ImageView
+                    android:id="@+id/alertWarningIcon"
+                    android:layout_width="@dimen/icon_size_m"
+                    android:layout_height="@dimen/icon_size_m"
+                    android:contentDescription="@string/cd_alert_warning_icon"
+                    app:srcCompat="@drawable/ic_warning_amber" />
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_s"
+                    android:layout_marginEnd="@dimen/spacing_s"
+                    android:layout_weight="1"
+                    android:orientation="vertical">
+
+                    <TextView
+                        android:id="@+id/weatherAlertTitle"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/fomo_accent_gold"
+                        android:textSize="13sp"
+                        android:textStyle="bold"
+                        tools:text="High Wind Warning" />
+
+                    <TextView
+                        android:id="@+id/weatherAlertMessage"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="2dp"
+                        android:textColor="@color/fomo_text_primary"
+                        android:textSize="12sp"
+                        tools:text="Strong gusts detected. Travel with caution." />
+                </LinearLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/dismissAlertButton"
+                    style="@style/Widget.Material3.Button.TextButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:minHeight="@dimen/min_touch_target"
+                    android:text="@string/action_dismiss_alert"
+                    android:textColor="@color/fomo_text_secondary"
+                    android:textSize="12sp" />
+            </LinearLayout>
+
+            <!-- Main Content Container with Motion Animation -->
+            <LinearLayout
+                android:id="@+id/weatherContentLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+                <!-- Top Location Header Bar -->
+                <LinearLayout
+                    android:id="@+id/locationHeaderContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_m"
+                    android:layout_marginTop="@dimen/spacing_m"
+                    android:layout_marginEnd="@dimen/spacing_m"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <LinearLayout
+                        android:id="@+id/citySelectorButton"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:background="?attr/selectableItemBackground"
+                        android:clickable="true"
+                        android:contentDescription="@string/cd_select_city"
+                        android:focusable="true"
+                        android:gravity="center_vertical"
+                        android:minHeight="@dimen/min_touch_target"
+                        android:orientation="horizontal"
+                        android:paddingStart="@dimen/spacing_xs"
+                        android:paddingEnd="@dimen/spacing_xs">
+
+                        <ImageView
+                            android:id="@+id/locationPinIcon"
+                            android:layout_width="@dimen/icon_size_s"
+                            android:layout_height="@dimen/icon_size_s"
+                            android:contentDescription="@null"
+                            android:importantForAccessibility="no"
+                            app:srcCompat="@drawable/ic_location_pin"
+                            app:tint="@color/fomo_accent_electric_violet" />
+
+                        <TextView
+                            android:id="@+id/currentCityText"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_marginStart="@dimen/spacing_s"
+                            android:layout_marginEnd="@dimen/spacing_xs"
+                            android:layout_weight="1"
+                            android:ellipsize="end"
+                            android:maxLines="1"
+                            android:text="@string/location_header_default"
+                            android:textColor="@color/fomo_text_primary"
+                            android:textSize="15sp"
+                            android:textStyle="bold" />
+
+                        <ImageView
+                            android:id="@+id/cityDropDownIcon"
+                            android:layout_width="@dimen/icon_size_s"
+                            android:layout_height="@dimen/icon_size_s"
+                            android:contentDescription="@null"
+                            android:importantForAccessibility="no"
+                            app:srcCompat="@drawable/ic_arrow_drop_down"
+                            app:tint="@color/fomo_text_secondary" />
+                    </LinearLayout>
+
+                    <ImageButton
+                        android:id="@+id/citySearchButton"
+                        android:layout_width="@dimen/min_touch_target"
+                        android:layout_height="@dimen/min_touch_target"
+                        android:background="?attr/selectableItemBackgroundBorderless"
+                        android:contentDescription="@string/cd_search_city"
+                        app:srcCompat="@drawable/ic_search"
+                        app:tint="@color/fomo_accent_gold" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/conditionTitle"
+                    style="@style/TextAppearance.Fomo.ConditionTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_l"
+                    android:accessibilityHeading="true"
+                    android:text="@string/weather_condition_mostly_cloudy"
+                    android:textAlignment="center" />
+
+                <ImageView
+                    android:id="@+id/conditionIcon"
+                    android:layout_width="@dimen/weather_hero_icon_size"
+                    android:layout_height="@dimen/weather_hero_icon_size"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="@dimen/spacing_m"
+                    android:contentDescription="@string/cd_weather_condition"
+                    app:srcCompat="@drawable/cloudy_sunny" />
+
+                <TextView
+                    android:id="@+id/dateTimeText"
+                    style="@style/TextAppearance.Fomo.ObservationDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_s"
+                    android:text="@string/sample_date_time"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/temperatureText"
+                    style="@style/TextAppearance.Fomo.DisplayTemperature"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sample_temperature"
+                    android:textAlignment="center" />
+
+                <TextView
+                    android:id="@+id/highLowText"
+                    style="@style/TextAppearance.Fomo.HighLow"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/sample_high_low"
+                    android:textAlignment="center" />
+
+                <!-- Surface Card for 3 Atmospheric Metrics -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/metricsContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_m"
+                    android:layout_marginTop="@dimen/spacing_m"
+                    android:layout_marginEnd="@dimen/spacing_m"
+                    app:cardBackgroundColor="@color/fomo_surface_card"
+                    app:cardCornerRadius="@dimen/corner_radius_card"
+                    app:cardElevation="@dimen/elevation_card"
+                    app:strokeColor="@color/fomo_surface_card_stroke"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:baselineAligned="false"
+                        android:orientation="horizontal"
+                        android:paddingTop="@dimen/spacing_m"
+                        android:paddingBottom="@dimen/spacing_m">
+
+                        <!-- Rain Metric -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/rainIcon"
+                                android:layout_width="@dimen/metric_icon_size"
+                                android:layout_height="@dimen/metric_icon_size"
+                                android:contentDescription="@string/cd_rain_icon"
+                                app:srcCompat="@drawable/rain" />
+
+                            <TextView
+                                android:id="@+id/rainPercentageText"
+                                style="@style/TextAppearance.Fomo.MetricValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/spacing_xs"
+                                android:text="@string/rain_percentage_sample" />
+
+                            <TextView
+                                android:id="@+id/rainLabel"
+                                style="@style/TextAppearance.Fomo.MetricLabel"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/rain_label" />
+                        </LinearLayout>
+
+                        <!-- Wind Metric -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/windIcon"
+                                android:layout_width="@dimen/metric_icon_size"
+                                android:layout_height="@dimen/metric_icon_size"
+                                android:contentDescription="@string/cd_wind_icon"
+                                app:srcCompat="@drawable/wind" />
+
+                            <TextView
+                                android:id="@+id/windSpeedText"
+                                style="@style/TextAppearance.Fomo.MetricValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/spacing_xs"
+                                android:text="@string/wind_speed_sample" />
+
+                            <TextView
+                                android:id="@+id/windLabel"
+                                style="@style/TextAppearance.Fomo.MetricLabel"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/wind_label" />
+                        </LinearLayout>
+
+                        <!-- Humidity Metric -->
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:gravity="center_horizontal"
+                            android:orientation="vertical">
+
+                            <ImageView
+                                android:id="@+id/humidityIcon"
+                                android:layout_width="@dimen/metric_icon_size"
+                                android:layout_height="@dimen/metric_icon_size"
+                                android:contentDescription="@string/cd_humidity_icon"
+                                app:srcCompat="@drawable/humidity" />
+
+                            <TextView
+                                android:id="@+id/humidityPercentageText"
+                                style="@style/TextAppearance.Fomo.MetricValue"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:layout_marginTop="@dimen/spacing_xs"
+                                android:text="@string/humidity_percentage_sample" />
+
+                            <TextView
+                                android:id="@+id/humidityLabel"
+                                style="@style/TextAppearance.Fomo.MetricLabel"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="@string/humidity_label" />
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Atmospheric Intelligence & AI Briefing Card -->
+                <com.google.android.material.card.MaterialCardView
+                    android:id="@+id/atmosphericIntelligenceCard"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_m"
+                    android:layout_marginTop="@dimen/spacing_m"
+                    android:layout_marginEnd="@dimen/spacing_m"
+                    app:cardBackgroundColor="@color/fomo_surface_card"
+                    app:cardCornerRadius="@dimen/corner_radius_card"
+                    app:cardElevation="@dimen/elevation_card"
+                    app:strokeColor="@color/fomo_surface_card_stroke"
+                    app:strokeWidth="1dp">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="@dimen/spacing_m">
+
+                        <!-- Header with Badge -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                android:id="@+id/aiBriefingTitle"
+                                style="@style/TextAppearance.Fomo.SectionHeader"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_weight="1"
+                                android:accessibilityHeading="true"
+                                android:text="@string/atmospheric_intelligence_title"
+                                android:textSize="15sp" />
+
+                            <TextView
+                                android:id="@+id/aiBadge"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:background="@drawable/bg_hourly_card"
+                                android:paddingStart="@dimen/spacing_s"
+                                android:paddingTop="2dp"
+                                android:paddingEnd="@dimen/spacing_s"
+                                android:paddingBottom="2dp"
+                                android:text="@string/ai_briefing_label"
+                                android:textColor="@color/fomo_accent_gold"
+                                android:textSize="11sp"
+                                android:textStyle="bold" />
+                        </LinearLayout>
+
+                        <!-- Headline -->
+                        <TextView
+                            android:id="@+id/aiHeadlineText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_s"
+                            android:textColor="@color/fomo_text_primary"
+                            android:textSize="14sp"
+                            android:textStyle="bold"
+                            tools:text="Optimal Comfort • Mild Conditions (25°C)" />
+
+                        <!-- Summary Text -->
+                        <TextView
+                            android:id="@+id/aiSummaryText"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_xs"
+                            android:textColor="@color/fomo_text_secondary"
+                            android:textSize="13sp"
+                            tools:text="Atmospheric temperature is 25°C with an apparent feel of 25°C. Wind is moderate at 12 km/h." />
+
+                        <!-- Divider -->
+                        <View
+                            android:layout_width="match_parent"
+                            android:layout_height="1dp"
+                            android:layout_marginTop="@dimen/spacing_m"
+                            android:layout_marginBottom="@dimen/spacing_m"
+                            android:background="@color/fomo_surface_card_stroke" />
+
+                        <!-- Row 1: Attire Advice -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:id="@+id/attireIcon"
+                                android:layout_width="@dimen/icon_size_s"
+                                android:layout_height="@dimen/icon_size_s"
+                                android:contentDescription="@string/cd_attire_icon"
+                                app:srcCompat="@drawable/ic_checkroom" />
+
+                            <TextView
+                                android:id="@+id/aiAttireText"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/spacing_s"
+                                android:layout_weight="1"
+                                android:textColor="@color/fomo_text_primary"
+                                android:textSize="13sp"
+                                tools:text="Comfortable t-shirt and casual pants suggested." />
+                        </LinearLayout>
+
+                        <!-- Row 2: Outdoor Activity Index -->
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="@dimen/spacing_s"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <ImageView
+                                android:id="@+id/activityIcon"
+                                android:layout_width="@dimen/icon_size_s"
+                                android:layout_height="@dimen/icon_size_s"
+                                android:contentDescription="@string/cd_activity_icon"
+                                app:srcCompat="@drawable/ic_directions_run" />
+
+                            <TextView
+                                android:id="@+id/aiOutdoorActivityText"
+                                android:layout_width="0dp"
+                                android:layout_height="wrap_content"
+                                android:layout_marginStart="@dimen/spacing_s"
+                                android:layout_weight="1"
+                                android:textColor="@color/fomo_text_primary"
+                                android:textSize="13sp"
+                                tools:text="Great conditions for running and cycling (Activity index: 85/100)." />
+                        </LinearLayout>
+
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+
+                <!-- Section Header Row: Today vs Next 7 Days -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="@dimen/spacing_m"
+                    android:layout_marginTop="@dimen/spacing_l"
+                    android:layout_marginEnd="@dimen/spacing_m"
+                    android:layout_marginBottom="@dimen/spacing_s"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/todayTitle"
+                        style="@style/TextAppearance.Fomo.SectionHeader"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:accessibilityHeading="true"
+                        android:text="@string/section_today" />
+
+                    <TextView
+                        android:id="@+id/next7DaysButton"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:clickable="true"
+                        android:contentDescription="@string/cd_next_7_days"
+                        android:focusable="true"
+                        android:foreground="?attr/selectableItemBackground"
+                        android:minHeight="@dimen/min_touch_target"
+                        android:gravity="center_vertical"
+                        android:paddingStart="@dimen/spacing_s"
+                        android:paddingEnd="@dimen/spacing_s"
+                        android:text="@string/next_7_days"
+                        android:textColor="@color/fomo_accent_gold"
+                        android:textSize="14sp"
+                        android:textStyle="bold" />
+                </LinearLayout>
+
+                <!-- Hourly Forecast Carousel -->
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/view1"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:clipToPadding="false"
+                    android:paddingStart="@dimen/spacing_m"
+                    android:paddingEnd="@dimen/spacing_m"
+                    tools:listitem="@layout/viewholder_hourly" />
+
+            </LinearLayout>
+
+        </LinearLayout>
+    </ScrollView>
+
+</androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
