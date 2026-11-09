@@ -40,3 +40,6 @@
 # Security and Cryptography Managers
 -keep class com.example.fomo.security.** { *; }
 -keep class javax.crypto.** { *; }
+
+# Core Performance and Concurrency Managers
+-keep class com.example.fomo.core.** { *; }

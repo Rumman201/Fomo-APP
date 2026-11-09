@@ -6,6 +6,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.VisibleForTesting;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 import java.security.GeneralSecurityException;
@@ -170,24 +171,40 @@ public class SecureKeystoreManager {
     }
 
     /**
-     * Dual-environment Base64 encoder compatible with Android runtimes and JVM tests.
+     * Dual-environment Base64 encoder compatible with Android API 24+ and JVM host unit tests.
      */
     public static String encodeBase64(@NonNull byte[] data) {
         try {
-            return java.util.Base64.getEncoder().encodeToString(data);
-        } catch (Throwable t) {
             return android.util.Base64.encodeToString(data, android.util.Base64.NO_WRAP);
+        } catch (Throwable t) {
+            try {
+                Class<?> clazz = Class.forName("java.util.Base64");
+                Method getEncoderMethod = clazz.getMethod("getEncoder");
+                Object encoder = getEncoderMethod.invoke(null);
+                Method encodeMethod = encoder.getClass().getMethod("encodeToString", byte[].class);
+                return (String) encodeMethod.invoke(encoder, data);
+            } catch (Exception e) {
+                throw new RuntimeException("Base64 encoding failed across both Android and JVM providers", e);
+            }
         }
     }
 
     /**
-     * Dual-environment Base64 decoder compatible with Android runtimes and JVM tests.
+     * Dual-environment Base64 decoder compatible with Android API 24+ and JVM host unit tests.
      */
     public static byte[] decodeBase64(@NonNull String base64) {
         try {
-            return java.util.Base64.getDecoder().decode(base64);
-        } catch (Throwable t) {
             return android.util.Base64.decode(base64, android.util.Base64.NO_WRAP);
+        } catch (Throwable t) {
+            try {
+                Class<?> clazz = Class.forName("java.util.Base64");
+                Method getDecoderMethod = clazz.getMethod("getDecoder");
+                Object decoder = getDecoderMethod.invoke(null);
+                Method decodeMethod = decoder.getClass().getMethod("decode", String.class);
+                return (byte[]) decodeMethod.invoke(decoder, base64);
+            } catch (Exception e) {
+                throw new RuntimeException("Base64 decoding failed across both Android and JVM providers", e);
+            }
         }
     }
 }

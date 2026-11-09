@@ -2,6 +2,7 @@ package com.example.fomo.domain.service;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import com.example.fomo.core.cache.FastLruCache;
 import com.example.fomo.domain.model.ActivityScores;
 import com.example.fomo.domain.model.AiWeatherAdvisory;
 import com.example.fomo.domain.model.AtmosphericIntelligence;
@@ -26,6 +27,7 @@ public class WeatherAiAdvisor {
 
     private final AtmosphericIntelligenceService intelligenceService;
     private final Gson gson;
+    private final FastLruCache<String, AiWeatherAdvisory> advisoryCache;
 
     public WeatherAiAdvisor() {
         this(new AtmosphericIntelligenceService());
@@ -34,6 +36,7 @@ public class WeatherAiAdvisor {
     public WeatherAiAdvisor(@NonNull AtmosphericIntelligenceService intelligenceService) {
         this.intelligenceService = Objects.requireNonNull(intelligenceService, "intelligenceService must not be null");
         this.gson = new Gson();
+        this.advisoryCache = new FastLruCache<>(64);
     }
 
     /**
@@ -51,6 +54,18 @@ public class WeatherAiAdvisor {
     @NonNull
     public AiWeatherAdvisory generateBriefing(@NonNull CurrentWeather weather, @Nullable String rawAiJson) {
         Objects.requireNonNull(weather, "weather must not be null");
+
+        // Check in-memory advisory cache for deterministic generations
+        String cacheKey = null;
+        if (rawAiJson == null || rawAiJson.trim().isEmpty()) {
+            cacheKey = weather.getCondition() + "_" + weather.getTemperature() + "_"
+                    + weather.getRainPercentage() + "_" + weather.getWindSpeed();
+            AiWeatherAdvisory cached = advisoryCache.get(cacheKey);
+            if (cached != null) {
+                return cached;
+            }
+        }
+
         AtmosphericIntelligence intel = intelligenceService.analyze(weather);
 
         if (rawAiJson != null && !rawAiJson.trim().isEmpty()) {
@@ -60,7 +75,11 @@ public class WeatherAiAdvisor {
             }
         }
 
-        return generateDeterministicBriefing(weather, intel);
+        AiWeatherAdvisory generated = generateDeterministicBriefing(weather, intel);
+        if (cacheKey != null) {
+            advisoryCache.put(cacheKey, generated);
+        }
+        return generated;
     }
 
     /**

@@ -2,12 +2,20 @@ package com.example.fomo.data.local.entity;
 
 import androidx.annotation.NonNull;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 /**
  * Room entity storing audit logs and delivery history for intelligent meteorological automations.
+ * Uses composite indices on `(triggerType, timestamp)` and `timestamp` to ensure O(1) cooldown lookups.
  */
-@Entity(tableName = "automation_logs")
+@Entity(
+        tableName = "automation_logs",
+        indices = {
+                @Index(value = {"triggerType", "timestamp"}),
+                @Index(value = {"timestamp"})
+        }
+)
 public class AutomationEntity {
 
     @PrimaryKey(autoGenerate = true)
@@ -43,4 +51,3 @@ public class AutomationEntity {
         this.metricValue = metricValue;
     }
 }
-

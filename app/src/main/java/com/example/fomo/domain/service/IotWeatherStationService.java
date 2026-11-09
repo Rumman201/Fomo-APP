@@ -5,6 +5,10 @@ import androidx.annotation.Nullable;
 import com.example.fomo.data.remote.dto.IotStationTelemetryDto;
 import com.example.fomo.domain.model.StationReading;
 import com.example.fomo.security.sanitizer.InputSanitizer;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Objects;
 
 /**
  * Service defining and enforcing the IoT Personal Weather Station (PWS) Telemetry Ingestion Contract.
@@ -92,34 +96,38 @@ public class IotWeatherStationService {
             );
         }
 
-        if (dto.getAmbientTemperatureC() < MIN_TEMPERATURE_C || dto.getAmbientTemperatureC() > MAX_TEMPERATURE_C) {
+        if (Double.isNaN(dto.getAmbientTemperatureC()) || Double.isInfinite(dto.getAmbientTemperatureC())
+                || dto.getAmbientTemperatureC() < MIN_TEMPERATURE_C || dto.getAmbientTemperatureC() > MAX_TEMPERATURE_C) {
             return new IngestionResult(
                     Status.OUT_OF_BOUNDS_TEMPERATURE,
-                    "Temperature (" + dto.getAmbientTemperatureC() + "°C) exceeds physical bounds [-90°C, +60°C].",
+                    "Temperature (" + dto.getAmbientTemperatureC() + "°C) exceeds physical bounds [-90°C, +60°C] or is NaN/Infinite.",
                     null
             );
         }
 
-        if (dto.getRelativeHumidityPercent() < MIN_HUMIDITY || dto.getRelativeHumidityPercent() > MAX_HUMIDITY) {
+        if (Double.isNaN(dto.getRelativeHumidityPercent()) || Double.isInfinite(dto.getRelativeHumidityPercent())
+                || dto.getRelativeHumidityPercent() < MIN_HUMIDITY || dto.getRelativeHumidityPercent() > MAX_HUMIDITY) {
             return new IngestionResult(
                     Status.OUT_OF_BOUNDS_HUMIDITY,
-                    "Humidity (" + dto.getRelativeHumidityPercent() + "%) exceeds physical bounds [0%, 100%].",
+                    "Humidity (" + dto.getRelativeHumidityPercent() + "%) exceeds physical bounds [0%, 100%] or is NaN/Infinite.",
                     null
             );
         }
 
-        if (dto.getBarometricPressureHpa() < MIN_PRESSURE_HPA || dto.getBarometricPressureHpa() > MAX_PRESSURE_HPA) {
+        if (Double.isNaN(dto.getBarometricPressureHpa()) || Double.isInfinite(dto.getBarometricPressureHpa())
+                || dto.getBarometricPressureHpa() < MIN_PRESSURE_HPA || dto.getBarometricPressureHpa() > MAX_PRESSURE_HPA) {
             return new IngestionResult(
                     Status.OUT_OF_BOUNDS_PRESSURE,
-                    "Barometric pressure (" + dto.getBarometricPressureHpa() + " hPa) exceeds physical bounds [800, 1100 hPa].",
+                    "Barometric pressure (" + dto.getBarometricPressureHpa() + " hPa) exceeds physical bounds [800, 1100 hPa] or is NaN/Infinite.",
                     null
             );
         }
 
-        if (dto.getWindSpeedKmh() < 0.0 || dto.getWindSpeedKmh() > MAX_WIND_SPEED_KMH) {
+        if (Double.isNaN(dto.getWindSpeedKmh()) || Double.isInfinite(dto.getWindSpeedKmh())
+                || dto.getWindSpeedKmh() < 0.0 || dto.getWindSpeedKmh() > MAX_WIND_SPEED_KMH) {
             return new IngestionResult(
                     Status.OUT_OF_BOUNDS_WIND,
-                    "Wind speed (" + dto.getWindSpeedKmh() + " km/h) exceeds physical bounds [0, 350 km/h].",
+                    "Wind speed (" + dto.getWindSpeedKmh() + " km/h) exceeds physical bounds [0, 350 km/h] or is NaN/Infinite.",
                     null
             );
         }
@@ -136,6 +144,62 @@ public class IotWeatherStationService {
         );
 
         return new IngestionResult(Status.SUCCESS, "Telemetry successfully validated and ingested.", reading);
+    }
+
+    public static class BatchIngestionResult {
+        private final int totalReceived;
+        private final int successCount;
+        private final int rejectedCount;
+        private final List<StationReading> acceptedReadings;
+        private final long durationNanos;
+
+        public BatchIngestionResult(int totalReceived, int successCount, int rejectedCount,
+                                    @NonNull List<StationReading> acceptedReadings, long durationNanos) {
+            this.totalReceived = totalReceived;
+            this.successCount = successCount;
+            this.rejectedCount = rejectedCount;
+            this.acceptedReadings = Objects.requireNonNull(acceptedReadings);
+            this.durationNanos = durationNanos;
+        }
+
+        public int getTotalReceived() { return totalReceived; }
+        public int getSuccessCount() { return successCount; }
+        public int getRejectedCount() { return rejectedCount; }
+        @NonNull public List<StationReading> getAcceptedReadings() { return acceptedReadings; }
+        public long getDurationNanos() { return durationNanos; }
+        public double getThroughputPerSecond() {
+            if (durationNanos <= 0) return 0.0;
+            return (double) totalReceived / (durationNanos / 1_000_000_000.0);
+        }
+    }
+
+    /**
+     * High-throughput micro-batch ingestion validating collections of telemetry packets
+     * with amortized boundary overhead and performance metric collection.
+     */
+    @NonNull
+    public BatchIngestionResult ingestBatch(@Nullable List<IotStationTelemetryDto> dtoList) {
+        if (dtoList == null || dtoList.isEmpty()) {
+            return new BatchIngestionResult(0, 0, 0, Collections.emptyList(), 0L);
+        }
+
+        long startNanos = System.nanoTime();
+        List<StationReading> accepted = new ArrayList<>(dtoList.size());
+        int successCount = 0;
+        int rejectedCount = 0;
+
+        for (IotStationTelemetryDto dto : dtoList) {
+            IngestionResult result = ingest(dto);
+            if (result.isSuccess() && result.getReading() != null) {
+                accepted.add(result.getReading());
+                successCount++;
+            } else {
+                rejectedCount++;
+            }
+        }
+
+        long durationNanos = System.nanoTime() - startNanos;
+        return new BatchIngestionResult(dtoList.size(), successCount, rejectedCount, accepted, durationNanos);
     }
 
     /**

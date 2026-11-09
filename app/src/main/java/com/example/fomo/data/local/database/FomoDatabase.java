@@ -21,7 +21,7 @@ import com.example.fomo.data.local.entity.WeatherEntity;
  */
 @Database(
         entities = {WeatherEntity.class, HourlyEntity.class, CityEntity.class, AutomationEntity.class},
-        version = 2,
+        version = 3,
         exportSchema = false
 )
 public abstract class FomoDatabase extends RoomDatabase {
@@ -65,6 +65,20 @@ public abstract class FomoDatabase extends RoomDatabase {
     };
 
     /**
+     * Migration from version 2 to version 3: adds high-performance b-tree indices to
+     * `saved_cities` and `automation_logs` to eliminate full table scans.
+     */
+    public static final Migration MIGRATION_2_3 = new Migration(2, 3) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL("CREATE INDEX IF NOT EXISTS `index_saved_cities_isFavorite` ON `saved_cities` (`isFavorite`)");
+            database.execSQL("CREATE INDEX IF NOT EXISTS `index_saved_cities_selectedAt` ON `saved_cities` (`selectedAt`)");
+            database.execSQL("CREATE INDEX IF NOT EXISTS `index_automation_logs_triggerType_timestamp` ON `automation_logs` (`triggerType`, `timestamp`)");
+            database.execSQL("CREATE INDEX IF NOT EXISTS `index_automation_logs_timestamp` ON `automation_logs` (`timestamp`)");
+        }
+    };
+
+    /**
      * Obtains the thread-safe singleton instance of FomoDatabase.
      */
     public static FomoDatabase getInstance(Context context) {
@@ -76,7 +90,7 @@ public abstract class FomoDatabase extends RoomDatabase {
                             FomoDatabase.class,
                             DATABASE_NAME
                     )
-                    .addMigrations(MIGRATION_1_2)
+                    .addMigrations(MIGRATION_1_2, MIGRATION_2_3)
                     .build();
                 }
             }

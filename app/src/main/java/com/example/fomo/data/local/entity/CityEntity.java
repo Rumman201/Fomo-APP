@@ -3,12 +3,20 @@ package com.example.fomo.data.local.entity;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.Entity;
+import androidx.room.Index;
 import androidx.room.PrimaryKey;
 
 /**
  * Room entity representing a saved or favorite location in the multi-city catalog.
+ * Uses b-tree indices on `isFavorite` and `selectedAt` to accelerate frequent lookups.
  */
-@Entity(tableName = "saved_cities")
+@Entity(
+        tableName = "saved_cities",
+        indices = {
+                @Index(value = {"isFavorite"}),
+                @Index(value = {"selectedAt"})
+        }
+)
 public class CityEntity {
 
     @PrimaryKey(autoGenerate = true)
@@ -47,4 +55,3 @@ public class CityEntity {
         this.selectedAt = selectedAt;
     }
 }
-

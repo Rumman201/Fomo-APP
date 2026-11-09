@@ -3,6 +3,7 @@ package com.example.fomo.data.repository;
 import android.os.Handler;
 import android.os.Looper;
 import androidx.annotation.NonNull;
+import com.example.fomo.core.concurrency.AppExecutors;
 import com.example.fomo.data.local.dao.CityDao;
 import com.example.fomo.data.local.entity.CityEntity;
 import com.example.fomo.data.local.mapper.CityMapper;
@@ -40,8 +41,8 @@ public class RoomLocationRepository implements LocationRepository {
         this(
                 cityDao,
                 geocodingApiService,
-                Executors.newSingleThreadExecutor(),
-                new HandlerExecutor(new Handler(Looper.getMainLooper()))
+                AppExecutors.getInstance().diskIO(),
+                AppExecutors.getInstance().mainThread()
         );
     }
 

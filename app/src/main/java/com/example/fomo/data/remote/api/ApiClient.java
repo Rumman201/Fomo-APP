@@ -1,7 +1,10 @@
 package com.example.fomo.data.remote.api;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import java.io.File;
 import java.util.concurrent.TimeUnit;
+import okhttp3.Cache;
 import okhttp3.CertificatePinner;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
@@ -76,12 +79,14 @@ public final class ApiClient {
         return sGeocodingInstance;
     }
 
+    public static final long DEFAULT_HTTP_CACHE_SIZE_BYTES = 10 * 1024 * 1024L; // 10 MB
+
     /**
      * Builds an OkHttpClient configured with timeout bounds, certificate pinning, and logging.
      */
     @NonNull
     public static OkHttpClient buildOkHttpClient() {
-        return buildOkHttpClient(true);
+        return buildOkHttpClient(true, null, 0);
     }
 
     /**
@@ -89,6 +94,22 @@ public final class ApiClient {
      */
     @NonNull
     public static OkHttpClient buildOkHttpClient(boolean enablePinning) {
+        return buildOkHttpClient(enablePinning, null, 0);
+    }
+
+    /**
+     * Builds an OkHttpClient with configurable certificate pinning and optional HTTP disk cache.
+     */
+    @NonNull
+    public static OkHttpClient buildOkHttpClient(boolean enablePinning, @Nullable File cacheDir) {
+        return buildOkHttpClient(enablePinning, cacheDir, DEFAULT_HTTP_CACHE_SIZE_BYTES);
+    }
+
+    /**
+     * Builds an OkHttpClient with configurable certificate pinning, custom cache directory, and cache size bounds.
+     */
+    @NonNull
+    public static OkHttpClient buildOkHttpClient(boolean enablePinning, @Nullable File cacheDir, long cacheSizeBytes) {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();
         logging.setLevel(HttpLoggingInterceptor.Level.BASIC);
 
@@ -98,6 +119,10 @@ public final class ApiClient {
                 .writeTimeout(TIMEOUT_SECONDS, TimeUnit.SECONDS)
                 .addInterceptor(logging)
                 .retryOnConnectionFailure(true);
+
+        if (cacheDir != null && cacheSizeBytes > 0) {
+            builder.cache(new Cache(cacheDir, cacheSizeBytes));
+        }
 
         if (enablePinning) {
             builder.certificatePinner(buildCertificatePinner());

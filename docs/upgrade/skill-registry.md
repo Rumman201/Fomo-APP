@@ -58,6 +58,61 @@
 | **`security-observability-response`** | Security event logging, sensitive log redaction, incident response, audit trails | Error handling, log sanitization, audit logging | `ui`, `data/remote`, `domain` | Logging interceptors, Room DAOs | Phases 6, 8 |
 | **`security-regression-engineering`** | Negative tests, authorization matrices, secure defaults, CI release gates | Automated security tests, regression protection | `app/src/test/java` | Gradle, JUnit 4, Android Lint | Phases 6, 9, 10 |
 
+
+---
+
+## Phase 7 — Performance, Scalability & Reliability Engineering Skills (Added in Phase 7)
+
+| Skill Name | Path | Discipline | Operational Scope |
+| :--- | :--- | :--- | :--- |
+| **end-to-end-performance-engineering** | `.agents/skills/end-to-end-performance-engineering/SKILL.md` | Principal Performance Architect | End-to-end performance strategy, critical path tracing, workload profiling, and latency budgets |
+| **frontend-runtime-optimization** | `.agents/skills/frontend-runtime-optimization/SKILL.md` | Principal Frontend Performance Engineer | Layout flattening, view inflation tuning, memory leak elimination, and 60/120fps frame budgets |
+| **backend-throughput-optimization** | `.agents/skills/backend-throughput-optimization/SKILL.md` | Principal Backend Performance Engineer | OkHttp connection pooling, HTTP/2 multiplexing, JSON deserialization speedups, payload size |
+| **database-query-performance** | `.agents/skills/database-query-performance/SKILL.md` | Principal Database Performance Engineer | Jetpack Room and SQLite query optimization, indexing strategy, transaction boundary tuning |
+| **intelligent-caching-engineering** | `.agents/skills/intelligent-caching-engineering/SKILL.md` | Principal Caching Architect | Multi-tier caching architecture (L1 memory, L2 Room, HTTP disk cache), TTL management |
+| **scalable-concurrency-engineering** | `.agents/skills/scalable-concurrency-engineering/SKILL.md` | Principal Distributed Systems Architect | Background thread management, thread pool sizing, bounded dispatchers, backpressure |
+| **resilience-fault-tolerance** | `.agents/skills/resilience-fault-tolerance/SKILL.md` | Principal Site Reliability Engineer (SRE) | Circuit breaker pattern, exponential backoff with jitter, graceful offline degradation |
+| **load-stress-soak-testing** | `.agents/skills/load-stress-soak-testing/SKILL.md` | Principal Performance QA Engineer | Synthetic load generation, concurrency stress tests, memory leak soak testing, capacity bounds |
+| **production-slo-engineering** | `.agents/skills/production-slo-engineering/SKILL.md` | Principal SRE / Systems Architect | SLIs, SLOs, error budgets, latency percentile tracking, and performance observability |
+| **ai-inference-efficiency** | `.agents/skills/ai-inference-efficiency/SKILL.md` | AI Inference Performance Engineer | Mathematical calculation memoization, floating-point optimization, token-free rule execution |
+| **iot-edge-performance** | `.agents/skills/iot-edge-performance/SKILL.md` | IoT & Edge Performance Engineer | Telemetry batching, high-throughput micro-ingestion, sensor data sliding windows |
+| **performance-security-regression** | `.agents/skills/performance-security-regression/SKILL.md` | Security Performance Reviewer | Cross-cutting verification ensuring optimizations preserve all Phase 6 security controls |
+
+---
+
+## Phase 8 — DevOps, CI/CD & Operational Excellence Engineering Skills (Added in Phase 8)
+
+| Skill Name | Path | Discipline | Operational Scope |
+| :--- | :--- | :--- | :--- |
+| **cicd-pipeline-engineering** | `.agents/skills/cicd-pipeline-engineering/SKILL.md` | Principal CI/CD Architect | GitHub Actions Android workflows, job parallelization, Gradle caching, and lint/test gates |
+| **release-automation-engineering** | `.agents/skills/release-automation-engineering/SKILL.md` | Principal Release Engineer | Tagged releases, R8 packaging, SHA-256 cryptographic digest generation, GitHub Releases |
+| **reproducible-build-engineering** | `.agents/skills/reproducible-build-engineering/SKILL.md` | Principal DevOps Engineer | Containerized Android build environments, Dockerfile, docker-compose, and dependency pinning |
+| **observability-and-sli-slo** | `.agents/skills/observability-and-sli-slo/SKILL.md` | Principal SRE / Observability Architect | HealthCheckService diagnostics, AppMetricsCollector SLI/SLO tracking, zero-allocation telemetry |
+| **disaster-recovery-engineering** | `.agents/skills/disaster-recovery-engineering/SKILL.md` | Principal Reliability Engineer | SQLite corruption diagnostics, automated state restoration, ADB backup/restore tooling |
+| **incident-management-runbooks** | `.agents/skills/incident-management-runbooks/SKILL.md` | Operations Lead / SRE | Incident triage, P0/P1 emergency response runbooks, rollout halting, forward hotfixes |
+| **aimlops-lifecycle-operations** | `.agents/skills/aimlops-lifecycle-operations/SKILL.md` | MLOps Platform Engineer | Deterministic AI model operations, empirical rule validation gates, token-free inference testing |
+| **iot-fleet-operations** | `.agents/skills/iot-fleet-operations/SKILL.md` | IoT Operations Specialist | Fleet telemetry operations, batch rate caps, sensor data quarantine, stream diagnostics |
+| **devops-security-supply-chain** | `.agents/skills/devops-security-supply-chain/SKILL.md` | Security DevOps Architect | Supply chain security, dependency provenance, ProGuard/R8 code obfuscation, artifact signing |
+
+---
+
+## Phase 9 — Quality Engineering, Adversarial Verification & Release Certification Skills (Added in Phase 9)
+
+| Skill Name | Path | Discipline | Operational Scope |
+| :--- | :--- | :--- | :--- |
+| **principal-qa-orchestration** | `.agents/skills/principal-qa-orchestration/SKILL.md` | Principal QA Architect | Risk-based test strategy, verification matrices, specialist delegation, defect prioritization |
+| **comprehensive-browser-e2e** | `.agents/skills/comprehensive-browser-e2e/SKILL.md` | Principal Mobile/E2E SDET | End-to-end user journeys, screen routing, ViewBinding, ViewModel state, and navigation |
+| **visual-motion-regression** | `.agents/skills/visual-motion-regression/SKILL.md` | Visual & Motion QA Specialist | Layout density testing, animation lifecycle validation, and layout hierarchy audit |
+| **accessibility-verification** | `.agents/skills/accessibility-verification/SKILL.md` | Accessibility QA Lead | Android TalkBack semantics, WCAG 2.2 AA evaluation, 48dp touch targets, high contrast |
+| **backend-api-contract-qa** | `.agents/skills/backend-api-contract-qa/SKILL.md` | Principal Backend QA Engineer | REST API contract testing, JSON schema validation, error taxonomy, negative payload tests |
+| **database-integrity-qa** | `.agents/skills/database-integrity-qa/SKILL.md` | Database QA Architect | Room SQLite schema integrity, index performance, atomic transactions, migration compatibility |
+| **adversarial-ai-evaluation** | `.agents/skills/adversarial-ai-evaluation/SKILL.md` | AI Red-Team Engineer | Meteorological polynomial edge validation, adversarial prompt injection red teaming, hallucination bounds |
+| **workflow-distributed-qa** | `.agents/skills/workflow-distributed-qa/SKILL.md` | Automation QA Engineer | Event-driven automation, meteorological trigger validation, 60-min suppression cooldowns |
+| **iot-firmware-verification** | `.agents/skills/iot-firmware-verification/SKILL.md` | IoT Verification Engineer | Weather station telemetry contract testing, physical bounds, anti-replay, batch limits |
+| **chaos-resilience-verification** | `.agents/skills/chaos-resilience-verification/SKILL.md` | Chaos & Reliability Engineer | Fault injection, network flapping, upstream outage simulation, circuit breaker verification |
+| **autonomous-defect-remediation** | `.agents/skills/autonomous-defect-remediation/SKILL.md` | Principal Remediation Engineer | Defect reproduction, root-cause diagnosis, minimal code patches, regression tests |
+| **release-candidate-certification** | `.agents/skills/release-candidate-certification/SKILL.md` | Independent Release Quality Lead | Release candidate qualification, full-system audit, defect threshold gating, Go/No-Go assessment |
+
 ---
 
 ## Domain Specialist Activation Note

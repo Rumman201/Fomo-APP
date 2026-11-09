@@ -1,10 +1,12 @@
 package com.example.fomo.domain.service;
 
 import androidx.annotation.NonNull;
+import com.example.fomo.core.cache.FastLruCache;
 import com.example.fomo.domain.model.ActivityScores;
 import com.example.fomo.domain.model.AtmosphericIntelligence;
 import com.example.fomo.domain.model.AtmosphericRisk;
 import com.example.fomo.domain.model.CurrentWeather;
+import java.util.Locale;
 
 /**
  * High-performance edge intelligence service calculating thermal comfort,
@@ -12,6 +14,8 @@ import com.example.fomo.domain.model.CurrentWeather;
  * Executes 100% on-device with zero cloud latency.
  */
 public class AtmosphericIntelligenceService {
+
+    private final FastLruCache<Long, Double> apparentTempCache = new FastLruCache<>(128);
 
     public AtmosphericIntelligence analyze(@NonNull CurrentWeather weather) {
         double temp = weather.getTemperature();
@@ -31,8 +35,16 @@ public class AtmosphericIntelligenceService {
 
     /**
      * Calculates thermal comfort index using NOAA Steadman Heat Index or Wind Chill equations.
+     * Results are memoized in an in-memory LRU cache to eliminate redundant transcendental floating-point evaluations.
      */
     public double calculateApparentTemperature(double tempC, double humidityPercent, double windSpeedKmh) {
+        long memoKey = toMemoKey(tempC, humidityPercent, windSpeedKmh);
+        Double cached = apparentTempCache.get(memoKey);
+        if (cached != null) {
+            return cached;
+        }
+
+        double result;
         if (tempC >= 27.0 && humidityPercent >= 40.0) {
             // NOAA Steadman Heat Index formula
             double tf = tempC * 1.8 + 32.0;
@@ -46,16 +58,27 @@ public class AtmosphericIntelligenceService {
                     + 0.00122874 * tf * tf * r
                     + 0.00085282 * tf * r * r
                     - 0.00000199 * tf * tf * r * r;
-            return Math.round(((hiF - 32.0) / 1.8) * 10.0) / 10.0;
+            result = Math.round(((hiF - 32.0) / 1.8) * 10.0) / 10.0;
         } else if (tempC <= 10.0 && windSpeedKmh >= 4.8) {
             // Environment Canada / NOAA Wind Chill formula
             double wc = 13.12
                     + 0.6215 * tempC
                     - 11.37 * Math.pow(windSpeedKmh, 0.16)
                     + 0.3965 * tempC * Math.pow(windSpeedKmh, 0.16);
-            return Math.round(wc * 10.0) / 10.0;
+            result = Math.round(wc * 10.0) / 10.0;
+        } else {
+            result = tempC;
         }
-        return tempC;
+
+        apparentTempCache.put(memoKey, result);
+        return result;
+    }
+
+    private static long toMemoKey(double t, double h, double w) {
+        long tBits = Math.round(t * 10);
+        long hBits = Math.round(h * 10);
+        long wBits = Math.round(w * 10);
+        return (tBits & 0xFFFFFL) << 40 | (hBits & 0xFFFFFL) << 20 | (wBits & 0xFFFFFL);
     }
 
     public String categorizeComfort(double apparentTempC) {
@@ -87,10 +110,11 @@ public class AtmosphericIntelligenceService {
         }
 
         // Precipitation modifier
-        boolean isWetCondition = condition.toLowerCase().contains("rain")
-                || condition.toLowerCase().contains("shower")
-                || condition.toLowerCase().contains("drizzle")
-                || condition.toLowerCase().contains("storm")
+        String lowerCondition = condition.toLowerCase(Locale.ROOT);
+        boolean isWetCondition = lowerCondition.contains("rain")
+                || lowerCondition.contains("shower")
+                || lowerCondition.contains("drizzle")
+                || lowerCondition.contains("storm")
                 || rainPercent >= 40;
 
         if (isWetCondition) {
@@ -107,7 +131,8 @@ public class AtmosphericIntelligenceService {
 
     public ActivityScores calculateActivityScores(double tempC, int rainPercent,
                                                   double windKmh, @NonNull String condition) {
-        boolean isStorm = condition.toLowerCase().contains("storm") || condition.toLowerCase().contains("thunder");
+        String lowerCond = condition.toLowerCase(Locale.ROOT);
+        boolean isStorm = lowerCond.contains("storm") || lowerCond.contains("thunder");
 
         if (isStorm) {
             return new ActivityScores(15, 10, 35, 5, 15, "Severe storm conditions; avoid outdoor sports.");
@@ -157,7 +182,7 @@ public class AtmosphericIntelligenceService {
 
     public AtmosphericRisk assessAtmosphericRisk(double tempC, double windKmh,
                                                  int rainPercent, @NonNull String condition) {
-        String lowerCond = condition.toLowerCase();
+        String lowerCond = condition.toLowerCase(Locale.ROOT);
         if (lowerCond.contains("thunder") || lowerCond.contains("storm") || windKmh >= 65.0) {
             return new AtmosphericRisk(
                     AtmosphericRisk.Level.CRITICAL,
@@ -189,7 +214,8 @@ public class AtmosphericIntelligenceService {
         try {
             String clean = text.replaceAll("[^0-9.]", "").trim();
             if (clean.isEmpty()) return fallback;
-            return Double.parseDouble(clean);
+            double val = Double.parseDouble(clean);
+            return Math.max(0.0, Math.min(100.0, val));
         } catch (Exception e) {
             return fallback;
         }
@@ -200,7 +226,8 @@ public class AtmosphericIntelligenceService {
         try {
             String clean = text.replaceAll("[^0-9.]", "").trim();
             if (clean.isEmpty()) return fallback;
-            return Double.parseDouble(clean);
+            double val = Double.parseDouble(clean);
+            return Math.max(0.0, Math.min(300.0, val));
         } catch (Exception e) {
             return fallback;
         }

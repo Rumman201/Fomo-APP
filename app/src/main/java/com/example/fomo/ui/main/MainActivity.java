@@ -51,6 +51,7 @@ public class MainActivity extends AppCompatActivity {
         hourlyAdapter = new HourlyAdapter();
         binding.view1.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.HORIZONTAL, false));
         binding.view1.setHasFixedSize(true);
+        binding.view1.setItemViewCacheSize(24);
         binding.view1.setAdapter(hourlyAdapter);
 
         // Pull-to-refresh setup

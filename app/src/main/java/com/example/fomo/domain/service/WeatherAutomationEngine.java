@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
@@ -65,7 +66,7 @@ public class WeatherAutomationEngine {
         double temp = current.getTemperature();
         int rainPercent = parseNumber(current.getRainPercentage());
         double windKmh = parseNumber(current.getWindSpeed());
-        String condition = current.getCondition() != null ? current.getCondition().toLowerCase() : "";
+        String condition = current.getCondition() != null ? current.getCondition().toLowerCase(Locale.ROOT) : "";
 
         // 1. Severe Storm trigger
         if (condition.contains("storm") || condition.contains("thunder")) {

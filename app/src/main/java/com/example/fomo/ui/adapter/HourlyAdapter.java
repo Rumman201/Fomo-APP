@@ -67,6 +67,7 @@ public class HourlyAdapter extends ListAdapter<Hourly, HourlyAdapter.ViewHolder>
             int drawableResourceId = WeatherIconMapper.getDrawableResourceId(item.getPicPath());
             Glide.with(context)
                     .load(drawableResourceId)
+                    .override(64, 64)
                     .into(binding.pic);
         }
     }

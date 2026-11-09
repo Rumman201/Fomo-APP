@@ -1,0 +1,20 @@
+version: '3.8'
+
+services:
+  android-builder:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: fomo-android-ci
+    volumes:
+      - .:/workspace
+      - gradle-cache:/root/.gradle
+    environment:
+      - GRADLE_OPTS=-Dorg.gradle.daemon=false -Dorg.gradle.parallel=true -Dorg.gradle.jvmargs="-Xmx3072m -XX:MaxMetaspaceSize=512m"
+    working_dir: /workspace
+    command: ["./gradlew", "lintDebug", "testDebugUnitTest", "assembleRelease"]
+
+volumes:
+  gradle-cache:
+    name: fomo-gradle-cache
+
